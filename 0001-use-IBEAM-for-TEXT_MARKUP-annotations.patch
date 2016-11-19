@@ -1,0 +1,50 @@
+From d3e7a5ad445c4fbdf8a5f3c609cbdd03facb5fc5 Mon Sep 17 00:00:00 2001
+From: Philipp Raich <philipp.raich@gmail.com>
+Date: Sun, 6 Nov 2016 19:40:35 +0100
+Subject: [PATCH] use IBEAM for TEXT_MARKUP annotations
+
+Selection of text is hard when not using an I-beam cursor,
+this commit introduces using an I-beam for text-markup type
+annotations, as those are about marking a text selection.
+
+https://bugzilla.gnome.org/show_bug.cgi?id=774018
+---
+ libview/ev-view.c | 15 ++++++++++++---
+ 1 file changed, 12 insertions(+), 3 deletions(-)
+
+diff --git a/libview/ev-view.c b/libview/ev-view.c
+index 7c416f6..42c75bd 100644
+--- a/libview/ev-view.c
++++ b/libview/ev-view.c
+@@ -2112,8 +2112,13 @@ ev_view_handle_cursor_over_xy (EvView *view, gint x, gint y)
+ 		return;
+ 
+ 	if (view->adding_annot_info.adding_annot && !view->adding_annot_info.annot) {
+-		if (view->cursor != EV_VIEW_CURSOR_ADD)
+-			ev_view_set_cursor (view, EV_VIEW_CURSOR_ADD);
++		if (view->adding_annot_info.type == EV_ANNOTATION_TYPE_TEXT_MARKUP) {
++			if (view->cursor != EV_VIEW_CURSOR_IBEAM)
++				ev_view_set_cursor (view, EV_VIEW_CURSOR_IBEAM);
++		} else {
++			if (view->cursor != EV_VIEW_CURSOR_ADD)
++				ev_view_set_cursor (view, EV_VIEW_CURSOR_ADD);
++		}
+ 		return;
+ 	}
+ 
+@@ -3408,7 +3413,11 @@ ev_view_create_annotation (EvView *view)
+ 	cairo_region_destroy (region);
+ 
+ 	view->adding_annot_info.annot = annot;
+-	ev_view_set_cursor (view, EV_VIEW_CURSOR_NORMAL);
++	/* assuming there is a purpose of resetting the cursor to NORMAL
++	 * so just excluding TEXT_MARKUP to be safe */
++	if (view->adding_annot_info.type != EV_ANNOTATION_TYPE_TEXT_MARKUP) {
++		ev_view_set_cursor (view, EV_VIEW_CURSOR_NORMAL);
++	}
+ }
+ 
+ void
+-- 
+2.7.4
+

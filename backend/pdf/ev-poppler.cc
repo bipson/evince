@@ -3563,6 +3563,9 @@ pdf_document_annotations_save_annotation (EvDocumentAnnotations *document_annota
 			case EV_ANNOTATION_TEXT_MARKUP_SQUIGGLY:
 				new_annot = poppler_annot_text_markup_new_squiggly (pdf_document->document, &rect, quads);
 				break;
+			case EV_ANNOTATION_TEXT_MARKUP_CARET:
+				//new_annot = poppler_annot_text_markup_new_caret (pdf_document->document, &rect, quads);
+				break;
 			}
 
 			g_array_unref (quads);
