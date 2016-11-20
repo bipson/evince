@@ -2914,6 +2914,9 @@ ev_annot_from_poppler_annot (PopplerAnnot *poppler_annot,
 	        case POPPLER_ANNOT_SQUIGGLY:
 			ev_annot = ev_annotation_text_markup_squiggly_new (page);
 			break;
+			case POPPLER_ANNOT_CARET:
+			ev_annot = ev_annotation_markup_caret_new (page);
+			break;
 	        case POPPLER_ANNOT_LINK:
 	        case POPPLER_ANNOT_WIDGET:
 	        case POPPLER_ANNOT_MOVIE:
@@ -2929,7 +2932,6 @@ ev_annot_from_poppler_annot (PopplerAnnot *poppler_annot,
 		}
 			/* Fall through */
 		case POPPLER_ANNOT_3D:
-		case POPPLER_ANNOT_CARET:
 		case POPPLER_ANNOT_FREE_TEXT:
 		case POPPLER_ANNOT_LINE:
 		case POPPLER_ANNOT_SOUND:
@@ -3514,6 +3516,12 @@ pdf_document_annotations_save_annotation (EvDocumentAnnotations *document_annota
 		}
 		if (mask & EV_ANNOTATIONS_SAVE_POPUP_IS_OPEN)
 			poppler_annot_markup_set_popup_is_open (markup, ev_annotation_markup_get_popup_is_open (ev_markup));
+		// TODO
+# if 0
+		case EV_ANNOTATION_MARKUP_CARET:
+			g_warning("%s", "Creating caret annotation currently not supported by poppler!");
+		break;
+#endif
 	}
 
 	if (EV_IS_ANNOTATION_TEXT (annot)) {

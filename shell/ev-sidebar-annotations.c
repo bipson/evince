@@ -250,6 +250,7 @@ job_finished_callback (EvJobAnnots          *job,
         GdkPixbuf *strike_out_icon = NULL;
         GdkPixbuf *underline_icon = NULL;
         GdkPixbuf *squiggly_icon = NULL;
+        GdkPixbuf *caret_icon = NULL;
 
 	priv = sidebar_annots->priv;
 
@@ -368,8 +369,20 @@ job_finished_callback (EvJobAnnots          *job,
                                         }
                                         pixbuf = squiggly_icon;
                                         break;
-                                }
-                        }
+							}
+			} else if (EV_IS_ANNOTATION_MARKUP (annot)) {
+				switch (ev_annotation_text_markup_get_markup_type (EV_ANNOTATION_TEXT_MARKUP (annot))) {
+					case EV_ANNOTATION_MARKUP_CARET:
+						if (!caret_icon) {
+							//TODO better icon https://developer.gnome.org/gtk3/3.10/GtkIconTheme.html#gtk-icon-theme-load-icon
+							caret_icon = gtk_widget_render_icon_pixbuf (priv->tree_view,
+									GTK_STOCK_UNDERLINE,
+									GTK_ICON_SIZE_BUTTON);
+						}
+						pixbuf = caret_icon;
+						break;
+				}
+			}
 
 			gtk_tree_store_append (model, &child_iter, &iter);
 			gtk_tree_store_set (model, &child_iter,
@@ -401,6 +414,8 @@ job_finished_callback (EvJobAnnots          *job,
                 g_object_unref (underline_icon);
         if (squiggly_icon)
                 g_object_unref (squiggly_icon);
+        if (caret_icon)
+                g_object_unref (caret_icon);
 
 	g_object_unref (job);
 	priv->job = NULL;

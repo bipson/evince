@@ -113,8 +113,12 @@ typedef enum {
         EV_ANNOTATION_TEXT_MARKUP_HIGHLIGHT,
         EV_ANNOTATION_TEXT_MARKUP_STRIKE_OUT,
         EV_ANNOTATION_TEXT_MARKUP_UNDERLINE,
-        EV_ANNOTATION_TEXT_MARKUP_SQUIGGLY
+        EV_ANNOTATION_TEXT_MARKUP_SQUIGGLY,
 } EvAnnotationTextMarkupType;
+
+typedef enum {
+	EV_ANNOTATION_MARKUP_CARET
+} EvAnnotationMarkupType;
 
 /* EvAnnotation */
 GType                ev_annotation_get_type                  (void) G_GNUC_CONST;
@@ -168,6 +172,7 @@ gboolean             ev_annotation_markup_set_rectangle      (EvAnnotationMarkup
 gboolean             ev_annotation_markup_get_popup_is_open  (EvAnnotationMarkup     *markup);
 gboolean             ev_annotation_markup_set_popup_is_open  (EvAnnotationMarkup     *markup,
 							      gboolean                is_open);
+EvAnnotation        *ev_annotation_markup_caret_new            (EvPage                    *page);
 
 /* EvAnnotationText */
 GType                ev_annotation_text_get_type             (void) G_GNUC_CONST;
