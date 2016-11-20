@@ -140,6 +140,8 @@ ev_sidebar_annotations_init (EvSidebarAnnotations *ev_annots)
 					     NULL);
 
 	renderer = gtk_cell_renderer_text_new ();
+	g_object_set(renderer, "wrap_mode", PANGO_WRAP_WORD_CHAR, NULL);
+	g_object_set(renderer, "wrap-width", 100, NULL);
 	gtk_tree_view_column_pack_start (column, renderer, TRUE);
 	gtk_tree_view_column_set_attributes (column, renderer,
 					     "markup", COLUMN_MARKUP,
@@ -300,6 +302,7 @@ job_finished_callback (EvJobAnnots          *job,
 			EvAnnotation *annot;
 			const gchar  *label;
 			const gchar  *modified;
+			const gchar  *contents;
 			gchar        *markup;
 			GtkTreeIter   child_iter;
 			GdkPixbuf    *pixbuf = NULL;
@@ -316,6 +319,7 @@ job_finished_callback (EvJobAnnots          *job,
 			} else {
 				markup = g_strdup_printf ("<span weight=\"bold\">%s</span>", label);
 			}
+			contents = ev_annotation_get_contents (annot);
 
 			if (EV_IS_ANNOTATION_TEXT (annot)) {
 				if (!text_icon) {
@@ -379,6 +383,19 @@ job_finished_callback (EvJobAnnots          *job,
 					    -1);
 			g_free (markup);
 			found = TRUE;
+
+			if (contents && ( strcmp("", contents) != 0) ) {
+				gchar        *note;
+				GtkTreeIter   cchild_iter;
+
+				note = g_strdup_printf (_("%s"), contents);
+				gtk_tree_store_append (model, &cchild_iter, &child_iter);
+				gtk_tree_store_set (model, &cchild_iter,
+							COLUMN_MARKUP, note,
+							-1);
+				g_free (note);
+			}
+
 		}
 
 		if (!found)
